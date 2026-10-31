@@ -14,6 +14,7 @@ from app.models import Base, ScheduledLoop, Task, TaskEvent, User
 from app.routes.tasks import build_cos_report, infer_task_type, run_task
 from app.services import orchestration
 from app.services import scheduler
+from app.services.orchestration import build_task_policy, evaluate_agent_health
 
 
 def test_authenticated_tasks_are_user_scoped(tmp_path, monkeypatch):
@@ -139,6 +140,20 @@ def test_cos_report_scores_agents_and_risk_status():
     assert len(report["agent_scorecard"]) >= 3
     assert report["agent_scorecard"][0]["agent_id"] in {"kiki", "mimi", "zazu"}
     assert report["agent_scorecard"][0]["score"] >= 0
+
+
+def test_task_policy_engine_and_agent_health():
+    policy = build_task_policy("Trade meme coins with a $25 budget and risk control")
+    assert policy["task_type"] == "trading"
+    assert policy["risk_limits"]["max_daily_loss_usd"] <= 100
+    assert "browser_allowlist" in policy
+    health = evaluate_agent_health([
+        {"agent_id": "kiki", "score": 96, "risk_adherence": 0.96},
+        {"agent_id": "mimi", "score": 61, "risk_adherence": 0.52},
+        {"agent_id": "zazu", "score": 91, "risk_adherence": 0.93},
+    ], policy)
+    assert health["recommended_action"] in {"keep", "pause", "monitor"}
+    assert any(entry["agent_id"] == "mimi" for entry in health["agents"])
 
 
 def test_stream_agent_records_text_deltas(monkeypatch):
