@@ -1,0 +1,12 @@
+FROM node:20-alpine AS build
+WORKDIR /workspace
+COPY frontend/package.json ./package.json
+COPY frontend/package-lock.json ./package-lock.json
+RUN npm ci --no-audit
+COPY frontend/ ./
+RUN npm run build
+
+FROM nginx:1.27-alpine
+COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /workspace/dist /usr/share/nginx/html
+EXPOSE 80

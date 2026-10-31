@@ -3,32 +3,34 @@
 @tailwind utilities;
 
 :root {
-  --bg: #0a0f1e;
+  --bg: #000000;
+  color-scheme: dark;
+}
+
+html {
+  background: #000;
 }
 
 body {
   margin: 0;
   font-family: 'Inter', system-ui, sans-serif;
-  background: var(--bg);
-  color: #e5e7eb;
+  background: #000000;
+  color: #ffffff;
   min-height: 100vh;
 }
 
-.orb {
-  position: fixed;
-  border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.5;
-  pointer-events: none;
-  z-index: 0;
+#root {
+  min-height: 100vh;
+  background: #000;
 }
-.orb-white { background: #ffffff; }
-.orb-green { background: #10b981; }
-.orb-blue { background: #3b82f6; }
 
 .glass {
-  background: rgba(255,255,255,0.05);
+  background: rgba(10, 10, 12, 0.9);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(255,255,255,0.15);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+::selection {
+  background: rgba(255,255,255,0.25);
 }
